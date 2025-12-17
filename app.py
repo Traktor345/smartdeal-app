@@ -2,7 +2,28 @@ import streamlit as st
 import pandas as pd
 import requests
 import base64
-from amazon.paapi import AmazonAPI
+import os
+import subprocess
+import sys
+
+# --- БЛОК АВТО-ИСПРАВЛЕНИЯ ЗАВИСИМОСТЕЙ ---
+try:
+    # Пытаемся импортировать библиотеку
+    from amazon.paapi import AmazonAPI
+except ModuleNotFoundError:
+    # Если не найдена — устанавливаем её прямо сейчас
+    st.warning("Установка недостающих библиотек... Это займет 10-20 секунд.")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "python-amazon-paapi"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "lxml"]) # Часто нужна для работы парсера
+    
+    # Снова импортируем после установки
+    from amazon.paapi import AmazonAPI
+# ------------------------------------------
+
+from datetime import datetime
+
+# Дальше идет остальной код: st.set_page_config(...) и так далее
+
 
 # --- КОНФИГУРАЦИЯ СТРАНИЦЫ ---
 st.set_page_config(page_title="SmartDeal Aggregator", page_icon="⚖️", layout="wide")
